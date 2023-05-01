@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, updateProfile } from 'firebase/auth';
 import app from '../../firebase.config';
 import { Link } from 'react-router-dom';
 
@@ -29,7 +29,8 @@ const Register = () => {
         // 2. collect data
         const email = event.target.email.value;
         const password = event.target.password.value;
-        console.log(email, password);
+        const name = event.target.name.value;
+        console.log(name, email, password);
         // validate 10
         if (!/(?=.*[A-Z])/.test(password)) {
             setError('Please add at least one uppercase');
@@ -57,6 +58,7 @@ const Register = () => {
                 event.target.reset();
                 setSuccess('User has been created successfully')
                 sendingEmailToVerification(result.user)
+                updateUserData(result.user, name)
 
             })
             .catch(error => {
@@ -72,12 +74,24 @@ const Register = () => {
                 alert('Please verify your email address')
             })
     }
+
+    const updateUserData = (user, name) =>{
+        updateProfile(user, {
+            displayName: name
+        })
+        .then(() =>{
+            console.log('user name update')
+        })
+        .catch(error =>{
+            setError(error.message)
+        })
+    }
     return (
         <div>
             <div className='w-50 mx-auto'>
                 <h4>Please Register</h4>
                 <form onSubmit={handleSubmit} >
-                    {/* <input className='w-50 mb-4 rounded ps-2' type="text" name="name" id="name" placeholder='Your Name' required /> */}
+                    <input className='w-50 mb-4 rounded ps-2' type="text" name="name" id="name" placeholder='Your Name' required />
                     <br />
                     <input /* 1 */ onChange={handleEmailChange} className='w-50 mb-4 rounded ps-2' type="email" name="email" id="email" placeholder='Your Email' required />
                     <br />

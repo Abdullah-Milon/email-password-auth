@@ -1,4 +1,4 @@
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import app from '../../firebase.config';
@@ -31,7 +31,19 @@ const Login = () => {
     }
 
     const handleResetPassword = event =>{
-        const email = (emailRef.current.value) //11
+        const email = emailRef.current.value //11
+        if(!email){
+            alert('Please provide your email address to reset password');
+            return;
+        }
+        sendPasswordResetEmail(auth, email)
+        .then(() => {
+            alert('Please cheack your email')
+        })
+        .catch(e =>{
+            console.log(e)
+            setError(e.message)
+        })
     }
 
     return (
