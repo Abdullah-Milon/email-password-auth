@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from 'firebase/auth';
 import app from '../../firebase.config';
+import { Link } from 'react-router-dom';
 
 //5
 const auth = getAuth(app);
@@ -29,8 +30,8 @@ const Register = () => {
         const email = event.target.email.value;
         const password = event.target.password.value;
         console.log(email, password);
-          // validate 10
-          if (!/(?=.*[A-Z])/.test(password)) {
+        // validate 10
+        if (!/(?=.*[A-Z])/.test(password)) {
             setError('Please add at least one uppercase');
             return;
         }
@@ -38,22 +39,37 @@ const Register = () => {
             setError('Please add at least two numbers');
             return
         }
+        else if (!/(?=.*[!@#$&*])/.test(password)) {
+            setError('Please add a special character.');
+            return
+        }
         else if (password.length < 6) {
             setError('Please add at least 6 characters in your password')
             return;
         }
-        event.target.reset();
-        setSuccess('User has been created successfully')
 
         // 3 create user in firebase (6)
         createUserWithEmailAndPassword(auth, email, password)
+
             .then(result => {
                 const loggedUser = result.user;
                 console.log(loggedUser)
+                event.target.reset();
+                setSuccess('User has been created successfully')
+                sendingEmailToVerification(result.user)
+
             })
             .catch(error => {
                 console.error(error)
                 setError(error.message) //৭
+            })
+    }
+
+    const sendingEmailToVerification = user => {
+        sendEmailVerification(user)
+            .then(result => {
+                console.log(result)
+                alert('Please verify your email address')
             })
     }
     return (
@@ -69,6 +85,7 @@ const Register = () => {
                     <br />
                     <input className='btn btn-primary' type="submit" value="Register" />
                 </form>
+                <p><small>Already have an account? Please <Link to="/login">Login</Link> </small></p>
                 <p className='text text-danger'>{error}</p>
                 <p className='text text-success'>{success}</p>
             </div>

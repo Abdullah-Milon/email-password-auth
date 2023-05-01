@@ -20,6 +20,7 @@ const Login = () => {
         signInWithEmailAndPassword(auth, email, password)
         .then(result =>{
             const userLogged = result.user;
+            console.log(userLogged)
             setSuccess('User Login successful.')
             setError('')
         })
@@ -48,7 +49,8 @@ const Login = () => {
             </form>
             <p><small>Forget Password? Please <button  className='btn btn-link'>Reset Password</button></small></p>
             <p><small>New to this website? Please <Link to="/register">Register</Link></small></p>
-            
+            <p className='text-success'>{success}</p>
+            <p className='text-danger'>{error}</p>
         </div>
     );
 };
