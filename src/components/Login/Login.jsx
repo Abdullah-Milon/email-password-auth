@@ -1,5 +1,5 @@
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import app from '../../firebase.config';
 
@@ -9,6 +9,7 @@ const Login = () => {
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const emailRef = useRef();
 
     const handleLogin = event =>{
         event.preventDefault();
@@ -28,14 +29,18 @@ const Login = () => {
             setError(error.message)
         })
     }
+
+    const handleResetPassword = event =>{
+        const email = (emailRef.current.value) //11
+    }
+
     return (
         <div className='w-25 mx-auto'>
             <h2>Please Login</h2>
             <form onSubmit={handleLogin} >
                 <div className="form-group mb-3">
                     <label htmlFor="email">Email address</label>
-                    <input type="email" name='email'  className="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" required />
-
+                    <input type="email" name='email' ref={emailRef}  className="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" required />
                 </div>
                 <div className="form-group mb-3">
                     <label htmlFor="password">Password</label>
@@ -47,7 +52,7 @@ const Login = () => {
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
             </form>
-            <p><small>Forget Password? Please <button  className='btn btn-link'>Reset Password</button></small></p>
+            <p><small>Forget Password? Please <button onClick={handleResetPassword} className='btn btn-link'>Reset Password</button></small></p>
             <p><small>New to this website? Please <Link to="/register">Register</Link></small></p>
             <p className='text-success'>{success}</p>
             <p className='text-danger'>{error}</p>
